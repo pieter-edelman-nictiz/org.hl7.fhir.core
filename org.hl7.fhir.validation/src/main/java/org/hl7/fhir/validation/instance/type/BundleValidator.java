@@ -414,11 +414,13 @@ public class BundleValidator extends BaseValidator {
           String rt = res.fhirType();
           String id = res.getNamedChildValue("id", false);
           if (sm != null) {
+            String fullUrl = entry.getNamedChildValue(FULL_URL, false);
+            boolean isRest = (fullUrl.startsWith("http://") || fullUrl.startsWith("https://"));
             if ("match".equals(sm)) {
-              ok = rule(errors, NO_RULE_DATE, IssueType.INVALID, bundle.line(), bundle.col(), rstack.getLiteralPath(), id != null, I18nConstants.BUNDLE_SEARCH_ENTRY_NO_RESOURCE_ID) && ok;
+              ok = rule(errors, NO_RULE_DATE, IssueType.INVALID, bundle.line(), bundle.col(), rstack.getLiteralPath(), !isRest || id != null, I18nConstants.BUNDLE_SEARCH_ENTRY_NO_RESOURCE_ID) && ok;
               ok = rule(errors, NO_RULE_DATE, IssueType.INVALID, bundle.line(), bundle.col(), rstack.getLiteralPath(), types.size() == 0 || checkSearchType(types, rt), I18nConstants.BUNDLE_SEARCH_ENTRY_WRONG_RESOURCE_TYPE_MODE, rt, types) && ok;
             } else if ("include".equals(sm)) {
-              ok = rule(errors, NO_RULE_DATE, IssueType.INVALID, bundle.line(), bundle.col(), rstack.getLiteralPath(), id != null, I18nConstants.BUNDLE_SEARCH_ENTRY_NO_RESOURCE_ID) && ok;
+              ok = rule(errors, NO_RULE_DATE, IssueType.INVALID, bundle.line(), bundle.col(), rstack.getLiteralPath(), !isRest || id != null, I18nConstants.BUNDLE_SEARCH_ENTRY_NO_RESOURCE_ID) && ok;
             } else { // outcome
               ok = rule(errors, NO_RULE_DATE, IssueType.INVALID, bundle.line(), bundle.col(), rstack.getLiteralPath(), "OperationOutcome".equals(rt), I18nConstants.BUNDLE_SEARCH_ENTRY_WRONG_RESOURCE_TYPE_OUTCOME, rt) && ok;
             }
